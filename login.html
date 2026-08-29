@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -52,6 +52,19 @@
       flex-direction: column;
       justify-content: space-between;
       min-height: 560px;
+    }
+    .hero-logo {
+      margin-bottom: 18px;
+      padding: 16px 18px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.78);
+      box-shadow: 0 18px 36px rgba(36, 61, 110, 0.12);
+    }
+    .hero-logo img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 16px;
     }
     .brand {
       font-family: "Noto Serif SC", serif;
@@ -174,6 +187,9 @@
   <div class="shell">
     <section class="hero">
       <div>
+        <div class="hero-logo">
+          <img src="assets/thinkcare-logo.png" alt="思德智护">
+        </div>
         <div class="brand">思德库</div>
         <h1>认知症照护专区<br>临时登录入口</h1>
         <p>请输入分配给你的用户名和密码，验证通过后才能进入本站的各个工具页面。</p>
