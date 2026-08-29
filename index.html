@@ -1,0 +1,313 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="思德库认知症照护专区独立工具集">
+  <title>认知症照护专区 | 思德库</title>
+  <style>
+    :root {
+      --primary: #1a5276;
+      --text: #1a202c;
+      --muted: #6b7686;
+      --bg: #fff6e8;
+      --border: rgba(255,255,255,0.58);
+      --shadow: 0 18px 38px rgba(113,72,28,0.14);
+      --shadow-hover: 0 24px 52px rgba(87,55,23,0.24);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: #fff7eb;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    a { color: inherit; text-decoration: none; }
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255,255,255,0.82);
+      border-bottom: 1px solid rgba(255,255,255,0.72);
+      box-shadow: 0 1px 18px rgba(88,64,35,0.08);
+      backdrop-filter: blur(14px);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      max-width: 1280px;
+      min-height: 64px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--primary);
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: 22px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .brand-logo {
+      width: 172px;
+      height: 54px;
+      object-fit: contain;
+      object-position: center;
+      padding: 0;
+      border-radius: 12px;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      flex: 0 0 auto;
+    }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .nav-links a {
+      display: block;
+      padding: 7px 10px;
+      border-radius: 6px;
+      color: #526273;
+      font-size: 14px;
+    }
+    .nav-links a:hover,
+    .nav-links a:focus-visible { color: var(--primary); background: #eef5fa; }
+    .section {
+      position: relative;
+      min-height: calc(100vh - 64px);
+      overflow: hidden;
+      padding: 78px 24px 92px;
+      background:
+        radial-gradient(circle at 52% 28%, rgba(255,235,158,0.78) 0, rgba(255,235,158,0.44) 20%, rgba(255,235,158,0) 42%),
+        linear-gradient(115deg, #e97368 0%, #ef9550 27%, #f5d870 58%, #9ccf84 100%);
+    }
+    .section::before,
+    .section::after {
+      position: absolute;
+      border-radius: 999px;
+      content: "";
+      pointer-events: none;
+    }
+    .section::before {
+      width: 520px;
+      height: 520px;
+      left: 12%;
+      top: 110px;
+      background: rgba(255,186,83,0.22);
+      filter: blur(70px);
+    }
+    .section::after {
+      width: 420px;
+      height: 420px;
+      right: 8%;
+      top: 190px;
+      background: rgba(255,255,255,0.18);
+      filter: blur(64px);
+    }
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .section-title {
+      margin-bottom: 48px;
+      text-align: center;
+    }
+    .section-title h1 {
+      margin: 0;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      color: #172033;
+      font-size: clamp(42px, 6vw, 82px);
+      font-weight: 900;
+      letter-spacing: 3px;
+      line-height: 1.16;
+      text-shadow:
+        0 2px 0 rgba(255,255,255,0.62),
+        0 16px 34px rgba(255,239,190,0.34);
+    }
+    .section-title h1::after {
+      display: block;
+      width: 132px;
+      height: 5px;
+      margin: 24px auto 22px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.82);
+      box-shadow: 0 8px 24px rgba(255,255,255,0.24);
+      content: "";
+    }
+    .section-title p {
+      margin: 0;
+      color: #34435c;
+      font-size: clamp(20px, 2.6vw, 34px);
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.58);
+    }
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .tool-card {
+      display: flex;
+      min-height: 244px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 26px 16px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .tool-card:hover,
+    .tool-card:focus-visible {
+      transform: translateY(-4px);
+      border-color: rgba(255,255,255,0.92);
+      background: #ffffff;
+      box-shadow: var(--shadow-hover);
+      outline: none;
+    }
+    .icon-wrap {
+      display: flex;
+      width: 84px;
+      height: 84px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      border-radius: 50%;
+    }
+    .icon-wrap svg { width: 42px; height: 42px; }
+    .tool-card h2 {
+      margin: 0 0 8px;
+      color: #111827;
+      font-size: 22px;
+    }
+    .tool-card p {
+      margin: 0;
+      color: #8290a3;
+      font-size: 17px;
+    }
+    .footer {
+      padding: 24px;
+      color: #8390a0;
+      background: #fffaf2;
+      border-top: 1px solid rgba(232,214,188,0.7);
+      text-align: center;
+      font-size: 13px;
+    }
+    @media (max-width: 1060px) {
+      .tool-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 700px) {
+      .nav-inner { align-items: flex-start; flex-direction: column; padding: 14px 16px; }
+      .brand { gap: 8px; }
+      .brand-logo { width: 146px; height: 46px; }
+      .nav-links a { padding: 5px 7px; font-size: 13px; }
+      .section { padding: 46px 14px 56px; }
+      .tool-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .tool-card { min-height: 190px; padding: 18px 10px; }
+      .icon-wrap { width: 64px; height: 64px; margin-bottom: 16px; }
+      .icon-wrap svg { width: 32px; height: 32px; }
+      .tool-card h2 { font-size: 17px; }
+      .tool-card p { font-size: 13px; }
+      .section-title { margin-bottom: 30px; }
+      .section-title h1 { letter-spacing: 1px; }
+      .section-title p { font-size: 16px; }
+    }
+  </style>
+  <script src="auth.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><img src="assets/thinkcare-logo.png" alt="思德智护" class="brand-logo"><span>思德库</span></a>
+      <ul class="nav-links">
+        <li><a href="#dementia">认知症照护专区</a></li>
+        <li><a href="#tools">全部工具</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <section class="section" id="dementia">
+      <div class="container">
+        <div class="section-title">
+          <h1>认知症照护专区</h1>
+          <p>从评估到干预，从环境到家属，认知症照护全流程工具</p>
+        </div>
+        <div class="tool-grid" id="tools">
+          <a class="tool-card" href="dementia-cdr.html">
+            <div class="icon-wrap" style="background:#f3e8fd;"><svg viewBox="0 0 24 24" fill="none" stroke="#8e44ad" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 5-5"/></svg></div>
+            <h2>CDR认知分期</h2><p>认知症严重程度评定</p>
+          </a>
+          <a class="tool-card" href="dementia-adl.html">
+            <div class="icon-wrap" style="background:#e8f4fd;"><svg viewBox="0 0 24 24" fill="none" stroke="#4d86bd" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path d="M9 22V12h6v10"/></svg></div>
+            <h2>ADL能力追踪</h2><p>日常生活能力评估</p>
+          </a>
+          <a class="tool-card" href="dementia-bpsd-log.html">
+            <div class="icon-wrap" style="background:#fef3e8;"><svg viewBox="0 0 24 24" fill="none" stroke="#ef934b" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></div>
+            <h2>BPSD行为日志</h2><p>ABC记录与分析</p>
+          </a>
+          <a class="tool-card" href="dementia-bpsd-plan.html">
+            <div class="icon-wrap" style="background:#e8fdf0;"><svg viewBox="0 0 24 24" fill="none" stroke="#5daf6b" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+            <h2>BPSD应对方案</h2><p>行为问题应对流程</p>
+          </a>
+          <a class="tool-card" href="dementia-bpsd-npi.html">
+            <div class="icon-wrap" style="background:#f3e8fd;"><svg viewBox="0 0 24 24" fill="none" stroke="#925cb1" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+            <h2>NPI-NH评估</h2><p>BPSD识别·评分·应对·记录</p>
+          </a>
+          <a class="tool-card" href="dementia-activity.html">
+            <div class="icon-wrap" style="background:#fde8f3;"><svg viewBox="0 0 24 24" fill="none" stroke="#d83d72" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg></div>
+            <h2>非药物干预</h2><p>活动方案与执行指引</p>
+          </a>
+          <a class="tool-card" href="dementia-cognitive-train.html">
+            <div class="icon-wrap" style="background:#e8ecfd;"><svg viewBox="0 0 24 24" fill="none" stroke="#5d99dc" stroke-width="2"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><rect x="14" y="14" width="8" height="8" rx="1"/></svg></div>
+            <h2>认知训练</h2><p>分阶段认知刺激活动</p>
+          </a>
+          <a class="tool-card" href="dementia-environment.html">
+            <div class="icon-wrap" style="background:#fdf8e8;"><svg viewBox="0 0 24 24" fill="none" stroke="#dfa02e" stroke-width="2"><rect x="1" y="6" width="22" height="16" rx="2"/><path d="M6 6V4a2 2 0 012-2h8a2 2 0 012 2v2"/></svg></div>
+            <h2>环境自查</h2><p>认知症友好环境检查</p>
+          </a>
+          <a class="tool-card" href="dementia-wandering.html">
+            <div class="icon-wrap" style="background:#fde8e8;"><svg viewBox="0 0 24 24" fill="none" stroke="#d15b4f" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+            <h2>走失防控</h2><p>风险评估与应急预案</p>
+          </a>
+          <a class="tool-card" href="dementia-family-comm.html">
+            <div class="icon-wrap" style="background:#e8fdfd;"><svg viewBox="0 0 24 24" fill="none" stroke="#55a79a" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+            <h2>家属沟通</h2><p>沟通模板与技巧</p>
+          </a>
+          <a class="tool-card" href="dementia-family-edu.html">
+            <div class="icon-wrap" style="background:#e8f4fd;"><svg viewBox="0 0 24 24" fill="none" stroke="#4e85b8" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+            <h2>家属教育</h2><p>认知症知识科普</p>
+          </a>
+          <a class="tool-card" href="dementia-training.html">
+            <div class="icon-wrap" style="background:#fef3e8;"><svg viewBox="0 0 24 24" fill="none" stroke="#ec9651" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 3 3 6 3s6-1 6-3v-5"/></svg></div>
+            <h2>专项培训</h2><p>照护员技能考核</p>
+          </a>
+          <a class="tool-card" href="dementia-quality.html">
+            <div class="icon-wrap" style="background:#e8fdf0;"><svg viewBox="0 0 24 24" fill="none" stroke="#61ad70" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>
+            <h2>质量看板</h2><p>KPI监控与数据追踪</p>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">思德库认知症照护专区 · 所有记录仅保存在当前浏览器</footer>
+</body>
+</html>

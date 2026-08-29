@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NPI-NH评估 | 认知症照护专区</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .scale-row { display: grid; grid-template-columns: 1fr repeat(4, minmax(70px, 100px)); gap: 8px; align-items: center; margin: 10px 0; }
+    .scale-row label { font-weight: 600; }
+    .scale-row input { width: auto; justify-self: center; }
+    .score-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+    .score-card { padding: 16px; border-radius: 10px; background: #eef7fb; text-align: center; }
+    .score-card strong { display: block; color: #1a5276; font-size: 30px; }
+    @media (max-width: 700px) {
+      .scale-row { grid-template-columns: 1fr repeat(4, 52px); font-size: 13px; }
+      .score-summary { grid-template-columns: 1fr; }
+    }
+  </style>
+  <script src="auth.js"></script>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="site-nav-inner">
+      <a href="index.html" class="site-nav-brand"><img src="assets/thinkcare-logo.png" alt="思德智护" class="site-nav-logo"><span>思德库</span></a>
+      <ul class="site-nav-links">
+        <li><a href="index.html#tools">认知症照护专区</a></li>
+      </ul>
+    </div>
+  </nav>
+  <main class="page-wrap">
+    <div class="page-header">
+      <h1>NPI-NH评估</h1>
+      <p class="sub">BPSD识别、评分、应对与记录</p>
+    </div>
+    <div class="notice">本工具用于照护场景中的行为和心理症状观察，不替代医学诊断。若出现突发或高风险症状，请及时联系医疗及专业人员。</div>
+    <div class="block">
+      <h2>老人信息</h2>
+      <div class="form-row">
+        <label for="personName">姓名或编号</label>
+        <input id="personName" placeholder="例如：001号老人">
+      </div>
+    </div>
+    <div class="block">
+      <h2>症状评分</h2>
+      <p>频率：0无、1偶尔、2有时、3经常；严重度：0无、1轻度、2中度、3重度。</p>
+      <div id="items"></div>
+      <button class="btn-save" type="button" onclick="saveAssessment()">计算并保存评估</button>
+      <div id="result" class="suggest-box" hidden></div>
+    </div>
+    <div class="block">
+      <h2>历史记录</h2>
+      <div id="history"><p style="color:#8996a3;">暂无记录</p></div>
+    </div>
+    <div class="page-footer">
+      <a class="footer-btn" href="index.html">返回专区首页</a>
+      <p class="disclaimer">本平台提供养老服务场景中的专业评估、观察与照护支持，不替代医学诊断、临床决策及依法应由持证专业人员完成的工作。最终判断应由相应专业人员结合实际情况确认。</p>
+    </div>
+  </main>
+  <script>
+    const symptoms = [
+      ['妄想', '无事实依据的坚信或怀疑'],
+      ['幻觉', '看到、听到或感觉不存在的事物'],
+      ['激越/攻击', '争吵、威胁、推打或其他攻击行为'],
+      ['抑郁/情绪低落', '悲伤、失去兴趣或明显退缩'],
+      ['焦虑', '担心、紧张、反复寻求保证'],
+      ['欣快/情绪高涨', '不合时宜的兴奋或过度乐观'],
+      ['冷漠', '缺乏主动性，不愿参与活动'],
+      ['脱抑制', '不合适的言语、行为或社交表现'],
+      ['易激惹/不稳定', '容易发脾气或情绪快速变化'],
+      ['异常动作/行为', '重复、无目的或不合适的动作'],
+      ['睡眠/夜间行为', '昼夜颠倒、夜间醒来或游走'],
+      ['食欲/进食变化', '食欲明显增加、减少或异常进食']
+    ];
+    const storageKey = 'dementia_npi_nh_records';
+    const items = document.getElementById('items');
+    symptoms.forEach((item, index) => {
+      items.insertAdjacentHTML('beforeend', `
+        <div class="q-card">
+          <h3>${index + 1}. ${item[0]}</h3>
+          <p>${item[1]}</p>
+          <div class="scale-row">
+            <label>频率</label>
+            <label><input type="radio" name="freq-${index}" value="0" checked> 0</label>
+            <label><input type="radio" name="freq-${index}" value="1"> 1</label>
+            <label><input type="radio" name="freq-${index}" value="2"> 2</label>
+            <label><input type="radio" name="freq-${index}" value="3"> 3</label>
+          </div>
+          <div class="scale-row">
+            <label>严重度</label>
+            <label><input type="radio" name="sev-${index}" value="0" checked> 0</label>
+            <label><input type="radio" name="sev-${index}" value="1"> 1</label>
+            <label><input type="radio" name="sev-${index}" value="2"> 2</label>
+            <label><input type="radio" name="sev-${index}" value="3"> 3</label>
+          </div>
+        </div>`);
+    });
+    function value(name) {
+      return Number(document.querySelector(`input[name="${name}"]:checked`).value);
+    }
+    function records() {
+      return JSON.parse(localStorage.getItem(storageKey) || '[]');
+    }
+    function renderHistory() {
+      const data = records();
+      const box = document.getElementById('history');
+      if (!data.length) {
+        box.innerHTML = '<p style="color:#8996a3;">暂无记录</p>';
+        return;
+      }
+      box.innerHTML = data.slice().reverse().map(record => `
+        <div class="history-entry">
+          <span class="date">${record.date} · ${record.person}</span>
+          <span class="result">总分 ${record.total} · ${record.level}</span>
+        </div>`).join('');
+    }
+    function saveAssessment() {
+      const person = document.getElementById('personName').value.trim() || '未命名老人';
+      let total = 0;
+      symptoms.forEach((_, index) => { total += value(`freq-${index}`) * value(`sev-${index}`); });
+      const level = total >= 24 ? '高风险' : total >= 12 ? '中风险' : total > 0 ? '低风险' : '未见明显症状';
+      const suggestion = total >= 24
+        ? '建议立即复核诱因、加强安全观察，并由专业人员评估是否需要医疗转介。'
+        : total >= 12
+          ? '建议建立行为记录，分析诱因，调整环境与沟通方式，并安排专业复评。'
+          : '建议继续观察，结合日常照护记录进行趋势追踪。';
+      const data = records();
+      data.push({ person, total, level, date: new Date().toLocaleString('zh-CN'), suggestion });
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      const result = document.getElementById('result');
+      result.hidden = false;
+      result.innerHTML = `<div class="score-summary"><div class="score-card"><strong>${total}</strong>总分</div><div class="score-card"><strong>${level}</strong>风险等级</div></div><p>${suggestion}</p>`;
+      renderHistory();
+    }
+    renderHistory();
+  </script>
+</body>
+</html>
